@@ -1,0 +1,11 @@
+# Node.js
+node_modules/
+build/
+
+# Python
+venv/
+*.pyc
+__pycache__/
+
+# Environment Variables
+.env
