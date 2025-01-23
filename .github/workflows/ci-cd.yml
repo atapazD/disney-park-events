@@ -45,7 +45,7 @@ jobs:
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
-        kubectl apply -f k8s/backend-deployment.yaml
-        kubectl apply -f k8s/backend-service.yaml
-        kubectl apply -f k8s/frontend-deployment.yaml
-        kubectl apply -f k8s/frontend-service.yaml
+        kubectl apply -f k8s/backend-deployment.yaml --insecure-skip-tls-verify
+        kubectl apply -f k8s/backend-service.yaml --insecure-skip-tls-verify
+        kubectl apply -f k8s/frontend-deployment.yaml --insecure-skip-tls-verify
+        kubectl apply -f k8s/frontend-service.yaml --insecure-skip-tls-verify
