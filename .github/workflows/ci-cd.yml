@@ -16,7 +16,8 @@ jobs:
 
     # Step 2: Log in to Docker Hub
     - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
     # Step 3: Build Backend Docker Image
     - name: Build Backend Image
@@ -36,8 +37,9 @@ jobs:
       with:
         version: 'latest'
 
-    - name: Set up Kubeconfig
-      run: echo "${{secrets.KUBECONFIG}}" > kubeconfig.yaml
+    - name: Set Up Kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig.yaml
 
     - name: Deploy to k3s
       env:
