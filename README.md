@@ -1,6 +1,6 @@
 # Disney Park Events
 
-A web application to manage Disney park events, showcasing bookings and interactivity. This project demonstrates full-stack development and DevOps principles using Flask for the backend and React (Material-UI) for the frontend.
+A web application to manage Disney park events, showcasing bookings and interactivity. This project demonstrates full-stack development and DevOps principles using Flask for the backend and React (Material-UI) for the frontend. This is all being deployed onto a local Raspberry Pi 5 (x3) cluster using ArgoCD tunneled with Cloudflare. 
 
 ## Features
 - View events with descriptions, dates, and capacities.
@@ -11,7 +11,7 @@ A web application to manage Disney park events, showcasing bookings and interact
 ## Tech Stack
 - **Frontend:** React, Material-UI
 - **Backend:** Flask (Python), Flask-CORS
-- **Version Control:** Git & GitHub
+- **Version Control:** GitHub
 
 ## Getting Started
 
