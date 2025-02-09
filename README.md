@@ -12,6 +12,7 @@ A web application to manage Disney park events, showcasing bookings and interact
 - **Frontend:** React, Material-UI
 - **Backend:** Flask (Python), Flask-CORS
 - **Version Control:** GitHub
+- **Secrets Manager**: Hashicorp Vault
 
 ## Getting Started
 
