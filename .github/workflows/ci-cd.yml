@@ -43,9 +43,9 @@ jobs:
           docker buildx build --platform linux/arm64 --push -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
 
       # Step 8: Notify ArgoCD to Sync Changes
-      - name: Trigger ArgoCD Sync
-        run: |
-          kubectl apply -f k8s/backend-deployment.yaml
-          kubectl apply -f k8s/backend-service.yaml
-          kubectl apply -f k8s/frontend-deployment.yaml
-          kubectl apply -f k8s/frontend-service.yaml
+      # - name: Trigger ArgoCD Sync
+      #   run: |
+      #     kubectl apply -f k8s/backend-deployment.yaml
+      #     kubectl apply -f k8s/backend-service.yaml
+      #     kubectl apply -f k8s/frontend-deployment.yaml
+      #     kubectl apply -f k8s/frontend-service.yaml
