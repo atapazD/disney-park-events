@@ -11,35 +11,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the Code
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the Code
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    # Step 2: Log in to Docker Hub
-    - name: Log in to Docker Hub
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      # Step 2: Set up QEMU for cross-platform emulation
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-    # Step 3: Set Image Tag Based on Branch
-    - name: Set Image Tag
-      run: echo "IMAGE_TAG=$(echo $GITHUB_REF | awk -F'/' '{print $3}')" >> $GITHUB_ENV
+      # Step 3: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    # Step 4: Build and Push Backend Image
-    - name: Build and Push Backend Image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend --platform linux/arm64
-        docker push ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }}
+      # Step 4: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    # Step 5: Build and Push Frontend Image
-    - name: Build and Push Frontend Image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend --platform linux/arm64
-        docker push ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }}
+      # Step 5: Set Image Tag Based on Branch
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=$(echo $GITHUB_REF | awk -F'/' '{print $3}')" >> $GITHUB_ENV
 
-    # Step 6: Notify ArgoCD to Sync Changes
-    - name: Trigger ArgoCD Sync
-      run: |
-        kubectl apply -f k8s/backend-deployment.yaml
-        kubectl apply -f k8s/backend-service.yaml
-        kubectl apply -f k8s/frontend-deployment.yaml
-        kubectl apply -f k8s/frontend-service.yaml
+      # Step 6: Build and Push Backend Image for ARM64
+      - name: Build and Push Backend Image
+        run: |
+          docker buildx build --platform linux/arm64 --push -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend
+
+      # Step 7: Build and Push Frontend Image for ARM64
+      - name: Build and Push Frontend Image
+        run: |
+          docker buildx build --platform linux/arm64 --push -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
+
+      # Step 8: Notify ArgoCD to Sync Changes
+      - name: Trigger ArgoCD Sync
+        run: |
+          kubectl apply -f k8s/backend-deployment.yaml
+          kubectl apply -f k8s/backend-service.yaml
+          kubectl apply -f k8s/frontend-deployment.yaml
+          kubectl apply -f k8s/frontend-service.yaml
