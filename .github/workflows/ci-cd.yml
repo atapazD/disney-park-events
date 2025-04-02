@@ -27,13 +27,13 @@ jobs:
     # Step 4: Build and Push Backend Image
     - name: Build and Push Backend Image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend --platform linux/arm64
         docker push ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }}
 
     # Step 5: Build and Push Frontend Image
     - name: Build and Push Frontend Image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend --platform linux/arm64
         docker push ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }}
 
     # Step 6: Notify ArgoCD to Sync Changes
