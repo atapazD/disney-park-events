@@ -16,9 +16,11 @@ spec:
     spec:
       containers:
       - name: backend
-        image: backend:latest # Replace with your Docker image name
+        image: doz23/backend:latest # Replace with your Docker image name
         ports:
         - containerPort: 5000
         env:
         - name: FLASK_ENV
           value: "development"
+      imagePullSecrets:
+        - name: regcred
