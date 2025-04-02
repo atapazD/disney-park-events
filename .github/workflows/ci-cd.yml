@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
 
     steps:
       # Step 1: Checkout the Code
@@ -35,12 +35,12 @@ jobs:
       # Step 6: Build and Push Backend Image for ARM64
       - name: Build and Push Backend Image
         run: |
-          docker buildx build --platform linux/arm64 --push -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend
+          docker buildx build --push -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend
 
       # Step 7: Build and Push Frontend Image for ARM64
       - name: Build and Push Frontend Image
         run: |
-          docker buildx build --platform linux/arm64 --push -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
+          docker buildx build --push -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
 
       # Step 8: Notify ArgoCD to Sync Changes
       # - name: Trigger ArgoCD Sync
