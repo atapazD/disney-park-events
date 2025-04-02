@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: doz23/frontend:latest # Replace with your Docker image name
+        image: doz23/disney-frontend:latest # Replace with your Docker image name
         ports:
         - containerPort: 3000
       imagePullSecrets:
