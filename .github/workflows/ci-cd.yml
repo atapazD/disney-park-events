@@ -3,6 +3,7 @@ name: CI/CD Pipeline for Disney Park Events
 on:
   push:
     branches:
+      - develop
       - master
 
 jobs:
@@ -19,33 +20,24 @@ jobs:
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    # Step 3: Build Backend Docker Image
-    - name: Build Backend Image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:latest ./backend
-        docker push ${{ secrets.DOCKER_USERNAME }}/disney-backend:latest
+    # Step 3: Set Image Tag Based on Branch
+    - name: Set Image Tag
+      run: echo "IMAGE_TAG=$(echo $GITHUB_REF | awk -F'/' '{print $3}')" >> $GITHUB_ENV
 
-    # Step 4: Build Frontend Docker Image
-    - name: Build Frontend Image
+    # Step 4: Build and Push Backend Image
+    - name: Build and Push Backend Image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:latest ./frontend
-        docker push ${{ secrets.DOCKER_USERNAME }}/disney-frontend:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend
+        docker push ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }}
 
-    # Step 5: Deploy to k3s
-    - name: Set Up Kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'latest'
-
-    - name: Set Up Kubeconfig
+    # Step 5: Build and Push Frontend Image
+    - name: Build and Push Frontend Image
       run: |
-        echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig.yaml
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
+        docker push ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }}
 
-    - name: Deploy to k3s
-      env:
-        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+    # Step 6: Notify ArgoCD to Sync Changes
+    - name: Trigger ArgoCD Sync
       run: |
-        kubectl apply -f k8s/backend-deployment.yaml
-        kubectl apply -f k8s/backend-service.yaml
-        kubectl apply -f k8s/frontend-deployment.yaml
-        kubectl apply -f k8s/frontend-service.yaml
+        curl -X POST -k -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+        https://argocd.dzcluster.casa/api/v1/applications/disney-${{ env.IMAGE_TAG }}/sync
