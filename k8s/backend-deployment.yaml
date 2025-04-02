@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: doz23/disney-backend:latest # Replace with your Docker image name
+        image: doz23/disney-backend:develop # Replace with your Docker image name
         ports:
         - containerPort: 5000
         env:
