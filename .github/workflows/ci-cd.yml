@@ -39,5 +39,7 @@ jobs:
     # Step 6: Notify ArgoCD to Sync Changes
     - name: Trigger ArgoCD Sync
       run: |
-        curl -X POST -k -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-        https://argocd.dzcluster.casa/api/v1/applications/disney-${{ env.IMAGE_TAG }}/sync
+        kubectl apply -f k8s/backend-deployment.yaml
+        kubectl apply -f k8s/backend-service.yaml
+        kubectl apply -f k8s/frontend-deployment.yaml
+        kubectl apply -f k8s/frontend-service.yaml
