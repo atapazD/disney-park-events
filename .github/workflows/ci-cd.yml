@@ -8,43 +8,29 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: macOS-latest  # Ensure this runner is an Apple Silicon (ARM64) machine
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Install Homebrew (if not already installed) and set it up
-      - name: Install Homebrew
-        run: |
-          # Install Homebrew if not installed (this script is idempotent)
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || true
-          echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $GITHUB_ENV
-          eval "$(/opt/homebrew/bin/brew shellenv)"
-
-      # Step 3: Install Colima and start it to provide Docker functionality
-      - name: Install Colima and Start Docker
-        run: |
-          brew install colima
-          colima start
-
-      # Step 4: Log in to Docker Hub
+      # Step 2: Log in to Docker Hub
       - name: Log in to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # Step 5: Set Image Tag Based on Branch
+      # Step 3: Set Image Tag Based on Branch
       - name: Set Image Tag
         run: echo "IMAGE_TAG=$(echo $GITHUB_REF | awk -F'/' '{print $3}')" >> $GITHUB_ENV
 
-      # Step 6: Build and Push Backend Image
+      # Step 4: Build and Push Backend Image
       - name: Build and Push Backend Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }} ./backend
           docker push ${{ secrets.DOCKER_USERNAME }}/disney-backend:${{ env.IMAGE_TAG }}
 
-      # Step 7: Build and Push Frontend Image
+      # Step 5: Build and Push Frontend Image
       - name: Build and Push Frontend Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/disney-frontend:${{ env.IMAGE_TAG }} ./frontend
