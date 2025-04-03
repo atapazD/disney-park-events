@@ -13,7 +13,7 @@ function App() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch("http://backend-service.disney-develop.svc.cluster.local:5000/events")
+    fetch("https://backend-disney-develop.dzcluster.casa/events")
       .then((response) => response.json())
       .then((data) => setEvents(data))
       .catch((error) => console.error("Error fetching events:", error));
