@@ -20,7 +20,7 @@ function App() {
   }, []);
 
   const handleBook = (id) => {
-    fetch("http://127.0.0.1:5000/book", {
+    fetch("https://backend-disney-develop.dzcluster.casa/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
